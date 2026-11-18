@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useStore } from '../store.jsx'
-import { Box, Cart, Chevron, Heart, Logout, Search, User } from '../icons.jsx'
+import { Box, Cart, Chevron, Heart, Logout, Moon, Search, Sun, User } from '../icons.jsx'
 
 function initials(name = '') {
   return name
@@ -21,6 +21,18 @@ export default function Header() {
   const urlQ = onHome ? params.get('q') || '' : ''
   const [q, setQ] = useState(urlQ)
   const [menu, setMenu] = useState(false)
+  const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || 'light')
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem('tb_theme', next)
+    } catch {
+      /* ignore */
+    }
+    setTheme(next)
+  }
   const menuRef = useRef(null)
 
   // keep the input in sync when the URL changes (e.g. "Qidiruvni tozalash")
@@ -79,6 +91,9 @@ export default function Header() {
         </form>
 
         <nav className="header-actions">
+          <button type="button" className="btn btn-outline theme-btn" onClick={toggleTheme} aria-label={theme === 'dark' ? "Kunduzgi rejim" : 'Tungi rejim'} title={theme === 'dark' ? "Kunduzgi rejim" : 'Tungi rejim'}>
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
           <Link to="/?fav=1" className="btn btn-outline">
             <Heart size={17} filled />
             <span className="hide-sm">Sevimlilar</span>

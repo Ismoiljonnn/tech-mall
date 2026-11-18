@@ -294,6 +294,23 @@ app.get('/api/orders', optionalAuth, (req, res) => {
   res.json({ orders: orders.map(publicOrder) })
 })
 
+// cancel: owner (token) or guest holding the secret code; returns stock to the warehouse
+app.post('/api/orders/:id/cancel', optionalAuth, (req, res, next) => {
+  const order = db().orders.find((o) => o.id === Number(req.params.id))
+  const code = str(req.body?.code)
+  const allowed = order && ((req.user && order.userId === req.user.id) || (code && code === order.code))
+  if (!allowed) return next(new HttpError(404, 'Buyurtma topilmadi'))
+  if (order.status !== 'Qabul qilindi') return next(new HttpError(409, 'Bu buyurtmani bekor qilib bo\'lmaydi'))
+  for (const l of order.items) {
+    const p = findProduct(l.productId)
+    if (p) p.stock += l.qty
+  }
+  order.status = 'Bekor qilindi'
+  order.cancelledAt = new Date().toISOString()
+  save()
+  res.json({ order: publicOrder(order), products: db().products })
+})
+
 // ---------- errors ----------
 app.use('/api', (_req, res) => res.status(404).json({ message: 'Topilmadi' }))
 

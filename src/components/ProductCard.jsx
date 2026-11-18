@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { CATEGORY_LABELS, formatMoney } from '../api.js'
 import { useStore } from '../store.jsx'
 import { Cart, Heart, ProductIcon, Star } from '../icons.jsx'
@@ -26,7 +27,9 @@ export default function ProductCard({ product }) {
         >
           <Heart size={17} filled={fav} />
         </button>
-        <ProductIcon name={product.icon} size={64} strokeWidth={1.3} />
+        <Link to={`/product/${product.id}`} className="media-link" aria-label={product.name}>
+          <ProductIcon name={product.icon} size={64} strokeWidth={1.3} />
+        </Link>
       </div>
       <div className="product-body">
         <div className="product-meta">
@@ -35,7 +38,9 @@ export default function ProductCard({ product }) {
             <Star size={14} /> {product.rating.toFixed(1)}
           </span>
         </div>
-        <h3>{product.name}</h3>
+        <h3>
+          <Link to={`/product/${product.id}`}>{product.name}</Link>
+        </h3>
         <p className="muted">{product.specs}</p>
         <div className="product-foot">
           <b className="price">{formatMoney(product.price)}</b>

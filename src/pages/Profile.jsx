@@ -31,7 +31,7 @@ export default function Profile() {
   if (!ready) return null
   if (!user) return <Navigate to={manualLogout.current ? '/' : '/login?next=/profile'} replace />
 
-  const totalSpent = orders.reduce((s, o) => s + o.total, 0)
+  const totalSpent = orders.filter((o) => o.status !== "Bekor qilindi").reduce((s, o) => s + o.total, 0)
   const dirty = name.trim() !== user.name || phone.replace(/\D/g, '') !== user.phone.replace(/\D/g, '')
 
   async function save(e) {

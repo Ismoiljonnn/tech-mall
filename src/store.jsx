@@ -268,7 +268,14 @@ export function StoreProvider({ children }) {
     [cart, user],
   )
 
-  const cartCount = cart.reduce((s, i) => s + i.qty, 0)
+  const cancelOrder = useCallback(async (order) => {
+    const data = await api(`/orders/${order.id}/cancel`, { method: 'POST', body: { code: order.code } })
+    setProducts(data.products)
+    setOrders((prev) => prev.map((o) => (o.id === data.order.id ? data.order : o)))
+    return data.order
+  }, [])
+
+  const cartCount =cart.reduce((s, i) => s + i.qty, 0)
   const cartLines = useMemo(
     () =>
       cart
@@ -302,6 +309,7 @@ export function StoreProvider({ children }) {
     placeOrder,
     loadOrders,
     manualLogout,
+    cancelOrder,
   }
   return <StoreCtx.Provider value={value}>{children}</StoreCtx.Provider>
 }
