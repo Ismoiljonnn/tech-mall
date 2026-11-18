@@ -1,16 +1,41 @@
-# React + Vite
+# TexnoBozor (tech-mall)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+An online electronics store built from the Figma design "TexnoBozor — UI Design". Frontend: React + Vite. Backend: Express (JSON file DB).
 
-Currently, two official plugins are available:
+## Running it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+- Frontend: http://localhost:5173
+- API: http://localhost:4000 (Vite forwards `/api` to it)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Production: `npm run build && npm start`. Express then serves `dist/` as well.
 
-## Expanding the Oxlint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- **Products**: categories (Noutbuklar, Audio, Aksessuarlar), search, sorting, "Faqat sevimlilar" filter, and an empty "Mahsulot topilmadi" state.
+- **Stock**: the "Omborda: N ta" badge, "Tugagan" / "Mavjud emas" when sold out. You can't put more in the cart than is in stock.
+- **Cart**: quantity, removing items, clearing the cart, the SALE10 promo code (10%), delivery (courier 30 000 so'm / pickup free).
+- **Ordering**: the server recomputes prices itself and checks stock all-or-nothing. If stock runs short it returns 409 and the cart is updated.
+- **Auth**: register/login (bcrypt + JWT, 7 days), "Meni eslab qol", profile editing.
+- A guest's cart and favorites are kept in localStorage and merged with the server after login.
+- **Profile menu**: Profilim, Buyurtmalarim, Sevimlilar, Chiqish.
+
+## API
+
+| Method | Path | Description |
+| --- | --- | --- |
+| POST | /api/auth/register | Register |
+| POST | /api/auth/login | Log in |
+| GET/PATCH | /api/auth/me | Profile |
+| GET | /api/products | Products |
+| GET | /api/me/state | Cart + favorites |
+| PUT | /api/me/cart, /api/me/favorites | Save |
+| POST | /api/promo/validate | Validate a promo code |
+| POST | /api/orders | Place an order |
+| GET | /api/orders | Orders |
+
+The DB is created automatically in `server/data.json`. Deleting it resets the data.
